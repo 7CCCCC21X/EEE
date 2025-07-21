@@ -9,34 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css"/>
 <style>
-:root{
-  --c-bg:#f9f9f9;--c-card:#fff;--c-text:#333;--c-sub:#666;--c-error:#e11d48;
-  --c-border:#e5e7eb;--c-border-dark:#374151;
-}
-html.dark{
-  --c-bg:#111827;--c-card:#1f2937;--c-text:#e5e7eb;--c-sub:#9ca3af;
-  --c-border:#374151;--c-border-dark:#4b5563;
-}
-/* —— 基础 —— */
-body{margin:0;padding:0;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-     background:var(--c-bg);color:var(--c-text);transition:background .3s,color .3s;}
+/* -------- 主题色 & 基础样式 -------- */
+:root{--c-bg:#f9f9f9;--c-card:#fff;--c-text:#333;--c-sub:#666;--c-error:#e11d48;--c-border:#e5e7eb;--c-border-dark:#374151;}
+html.dark{--c-bg:#111827;--c-card:#1f2937;--c-text:#e5e7eb;--c-sub:#9ca3af;--c-border:#374151;--c-border-dark:#4b5563;}
+body{margin:0;padding:0;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--c-bg);color:var(--c-text);transition:background .3s,color .3s;}
 h1{margin:0 0 18px;text-align:center;font-size:26px;}
 .container{max-width:960px;margin:auto;padding:24px;}
-textarea{
-  width:100%;height:120px;padding:10px;font-size:14px;resize:vertical;
-  border:1px solid var(--c-border);border-radius:8px;background:var(--c-card);color:var(--c-text);
-}
-button{font:inherit;padding:8px 20px;border-radius:8px;border:1px solid var(--c-border-dark);cursor:pointer;}
-button:disabled{opacity:.6;}
+textarea{width:100%;height:120px;padding:10px;font-size:14px;resize:vertical;border:1px solid var(--c-border);border-radius:8px;background:var(--c-card);color:var(--c-text);}
+button{font:inherit;padding:8px 20px;border-radius:8px;border:1px solid var(--c-border-dark);cursor:pointer;}button:disabled{opacity:.6;}
 input[type=number]{width:110px;padding:7px 6px;font:inherit;border:1px solid var(--c-border-dark);border-radius:8px;}
-/* —— 进度条 —— */
+/* -------- 进度条 -------- */
 .progress{margin-top:14px;height:14px;background:var(--c-border);border-radius:7px;overflow:hidden;position:relative;}
 .bar{height:100%;background:var(--c-text);width:0%;}
-#progTxt{position:absolute;left:50%;top:0;transform:translateX(-50%);font-size:12px;line-height:14px;
-         color:#fff;font-weight:700;text-shadow:0 0 4px rgba(0,0,0,.45);}
+#progTxt{position:absolute;left:50%;top:0;transform:translateX(-50%);font-size:12px;line-height:14px;color:#fff;font-weight:700;text-shadow:0 0 4px rgba(0,0,0,.45);}
 .status{margin-top:8px;font-size:14px;color:var(--c-sub);}
 .summary{margin-top:6px;font-size:15px;}
-/* —— 表格 —— */
+/* -------- 表格 -------- */
 .table-wrap{overflow-x:auto;margin-top:24px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.06);}
 table{width:100%;min-width:880px;border-collapse:collapse;background:var(--c-card);}
 th,td{padding:10px 8px;text-align:center;font-size:14px;border-bottom:1px solid var(--c-border);}
@@ -48,16 +36,26 @@ tbody tr:nth-child(even){background:rgba(0,0,0,.025);}tbody tr:hover{background:
 .lowbal td:nth-child(5){color:var(--c-error);}
 .error{color:var(--c-error);}
 tbody td{transition:background-color .3s;}
-/* —— 主题按钮 —— */
-#themeBtn{position:fixed;right:24px;bottom:24px;width:52px;height:52px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:24px;border:none;background:#888;color:#fff;cursor:pointer;
-  transition:transform .2s;}
+/* -------- 主题按钮 -------- */
+#themeBtn{position:fixed;right:24px;bottom:24px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;border:none;background:#888;color:#fff;cursor:pointer;transition:transform .2s;}
 #themeBtn:hover{transform:scale(1.07);}
+/* -------- 行情盒子 -------- */
+#gasBox{margin-bottom:16px;padding:10px 14px;border:1px solid var(--c-border);border-radius:8px;background:var(--c-card);font-size:14px;display:flex;flex-wrap:wrap;gap:16px;line-height:1.7;}
+#gasBox span{min-width:120px;}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>ETH主网 批量查询工具</h1>
+
+  <!-- 实时 ETH 价格 & Gas 显示 -->
+  <div id="gasBox">
+    <span id="ethPrice">ETH 价格加载中…</span>
+    <span id="gasRapid">Rapid --</span>
+    <span id="gasFast">Fast --</span>
+    <span id="gasStd">Standard --</span>
+    <span id="gasSlow">Safe --</span>
+  </div>
 
   <textarea id="addrInput" placeholder="每行一个地址（0x 开头）"></textarea>
 
@@ -84,46 +82,52 @@ tbody td{transition:background-color .3s;}
 </div>
 <!-- 作者 Twitter & 主题按钮 -->
 <a id="author" href="https://twitter.com/0xXIAOc" target="_blank" rel="noopener noreferrer"
-   style="position:fixed;right:92px;bottom:32px;font-size:14px;color:var(--c-sub);text-decoration:none;">
-  作者推特：@0xXIAOc
-</a>
+   style="position:fixed;right:92px;bottom:32px;font-size:14px;color:var(--c-sub);text-decoration:none;">作者推特：@0xXIAOc</a>
 <button id="themeBtn" title="切换主题">🌙</button>
 
 <script>
-/* ——— 配置 ——— */
+/* ---------- 配置 ---------- */
 const RPC="https://eth-mainnet.public.blastapi.io/";
 const SUBGRAPH="https://api.thegraph.com/subgraphs/name/ensdomains/ens";
 
-/* ——— 主题 ——— */
-const html=document.documentElement,themeBtn=document.getElementById('themeBtn');
-(function(){applyMode(localStorage.getItem('themeMode')||'system');
-  themeBtn.onclick=()=>applyMode(html.classList.contains('dark')?'light':'dark');})();
-function applyMode(m){const d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);
-  html.classList.toggle('dark',d);themeBtn.textContent=d?'☀️':'🌙';localStorage.setItem('themeMode',m);}
+/* —— Gas & 价格接口 —— */
+const GAS_ORG   ="https://beaconcha.in/gasnow/data";                         // 原始 (无 CORS)
+const GAS_PROXY ="https://corsproxy.io/?" + encodeURIComponent(GAS_ORG);     // 代理绕过 CORS
+const APIKEY    ="YourApiKey";                                               // Etherscan Key
+const GAS_FALL  =`https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${APIKEY}`;
+const PRICE_API =`https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${APIKEY}`;
 
-/* ——— Provider —— */
+/* ---------- 主题 ---------- */
+const html=document.documentElement,themeBtn=document.getElementById('themeBtn');
+(function(){applyMode(localStorage.getItem('themeMode')||'system');themeBtn.onclick=()=>applyMode(html.classList.contains('dark')?'light':'dark');})();
+function applyMode(m){const dark=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);
+  html.classList.toggle('dark',dark);themeBtn.textContent=dark?'☀️':'🌙';localStorage.setItem('themeMode',m);}
+
+/* ---------- Provider ---------- */
 const provider=new ethers.providers.JsonRpcBatchProvider(RPC);
 
-/* ——— DOM —— */
+/* ---------- DOM ---------- */
 const addrInput=document.getElementById('addrInput'),queryBtn=document.getElementById('queryBtn');
 const minUsdInput=document.getElementById('minUsd');
 const progress=document.getElementById('progress'),bar=document.getElementById('bar'),progTxt=document.getElementById('progTxt');
 const statusDom=document.getElementById('status'),summaryDom=document.getElementById('summary');
 const tbody=document.querySelector('tbody'),thead=document.querySelector('thead');
+const ethPriceDom=document.getElementById('ethPrice');
+const gasRapidDom=document.getElementById('gasRapid'),gasFastDom=document.getElementById('gasFast');
+const gasStdDom=document.getElementById('gasStd'),gasSlowDom=document.getElementById('gasSlow');
 
-/* ——— 状态 —— */
+/* ---------- 状态 ---------- */
 let ethUsd=0,total=0,done=0,ensCount=0,totalEth=0,sorting={key:null,dir:1};
 
-/* ——— 工具 —— */
+/* ---------- 工具 ---------- */
 const toEth=wei=>+ethers.utils.formatEther(wei);
 const fmtEth=n=>n.toLocaleString(undefined,{maximumFractionDigits:6});
 const fmtUsd=n=>n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 const toast=(t,c="#10b981")=>Toastify({text:t,duration:2500,gravity:'top',style:{background:c}}).showToast();
 
-/* —— ENS 到期 —— */
+/* ---------- ENS 到期 ---------- */
 async function fetchEnsExpiry(name){
-  try{
-    const id=ethers.utils.namehash(name);
+  try{const id=ethers.utils.namehash(name);
     const q=`{domain(id:"${id}"){registration{expiryDate}}}`;
     const d=await fetch(SUBGRAPH,{method:"POST",headers:{'content-type':'application/json'},
       body:JSON.stringify({query:q})}).then(r=>r.json());
@@ -131,37 +135,61 @@ async function fetchEnsExpiry(name){
   }catch{return 0;}
 }
 
-/* —— 价格 —— */
-async function fetchPrice(){
-  try{ethUsd=(await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").then(r=>r.json())).ethereum.usd;}catch{}
+/* ---------- 行情刷新 ---------- */
+async function updateGas(){
+  try{
+    /* 主线路：Gasnow (经代理) */
+    const {data}=await fetch(GAS_PROXY).then(r=>r.json());
+    ethUsd=data.price;
+    renderGas(data.rapid,data.fast,data.standard,data.slow);
+  }catch{
+    /* 备用：Etherscan */
+    try{
+      const [{result:gas},{result:price}] = await Promise.all([
+        fetch(GAS_FALL).then(r=>r.json()),
+        fetch(PRICE_API).then(r=>r.json())
+      ]);
+      ethUsd=Number(price.ethusd);
+      const gwei=n=>Number(n)*1e9;                         // 转为 Wei →便于复用渲染
+      renderGas(gwei(gas.FastGasPrice),gwei(gas.ProposeGasPrice),gwei(gas.SafeGasPrice),gwei(gas.SafeGasPrice));
+    }catch{
+      ethPriceDom.textContent="行情获取失败";gasRapidDom.textContent=gasFastDom.textContent=gasStdDom.textContent=gasSlowDom.textContent="--";
+    }
+  }
 }
+function renderGas(rapid,fast,std,slow){
+  const toGw=w=>(w/1e9).toFixed(1);
+  ethPriceDom.textContent=`ETH ≈ $${ethUsd.toLocaleString()}`;
+  gasRapidDom.textContent=`Rapid ${toGw(rapid)} Gwei`;
+  gasFastDom.textContent =`Fast ${toGw(fast)} Gwei`;
+  gasStdDom.textContent  =`Standard ${toGw(std)} Gwei`;
+  gasSlowDom.textContent =`Safe ${toGw(slow)} Gwei`;
+}
+updateGas();setInterval(updateGas,15000);
 
-/* —— 主流程 —— */
+/* ---------- 主流程 ---------- */
 queryBtn.onclick=async()=>{
   const addrs=addrInput.value.trim().split(/\s+/).filter(Boolean);
   if(!addrs.length){toast("请输入地址","#f59e0b");return;}
-  queryBtn.disabled=true;queryBtn.textContent='查询中…';await fetchPrice();
+  queryBtn.disabled=true;queryBtn.textContent='查询中…';await updateGas();
 
   tbody.innerHTML='';statusDom.textContent='';summaryDom.textContent='';
   progress.style.display='block';bar.style.width='0%';
   total=addrs.length;done=0;ensCount=0;totalEth=0;updateProgress();
 
-  /* 插入隐藏行以保持顺序 */
   const tasks=addrs.map((addr,i)=>({addr,row:createRow(addr,i+1)}));
   await Promise.all(Array(6).fill(0).map(async function worker(){
-    while(tasks.length){
-      const t=tasks.shift();await queryOne(t.addr,t.row);done++;updateProgress();
-    }}));
+    while(tasks.length){const t=tasks.shift();await queryOne(t.addr,t.row);done++;updateProgress();}}));
 
   displaySummary();queryBtn.disabled=false;queryBtn.textContent='开始查询';
 };
 
-/* —— 行组件 —— */
+/* ---------- 生成行 ---------- */
 function createRow(addr,idx){
   const tr=tbody.insertRow();tr.style.display='none';
   tr.innerHTML=`<td>${idx}</td><td>${addr}</td><td>—</td><td>—</td><td>—</td><td>—</td>`;
   tr.cells[1].dataset.copy=addr;
-  tr.addEventListener('click',()=>{              // 重试 ENS 到期
+  tr.addEventListener('click',()=>{
     if(tr.classList.contains('error'))return;
     const ens=tr.cells[2].textContent;
     if(ens!=='—'&&tr.cells[3].textContent==='—'){toast('重试 ENS 到期','#64748b');fetchEnsExpiry(ens).then(ts=>setExp(tr.cells[3],ts));}
@@ -175,7 +203,7 @@ function setExp(cell,ts){cell.classList.remove('expired');
 }
 function highlight(row,usd){row.classList.toggle('lowbal',usd<+minUsdInput.value);}
 
-/* —— 查询单地址 —— */
+/* ---------- 查询单地址 ---------- */
 async function queryOne(addr,row){
   for(let i=0;i<3;i++){
     try{
@@ -187,18 +215,12 @@ async function queryOne(addr,row){
       ]);
       const exp=ens?await fetchEnsExpiry(ens):0;
       const eth=toEth(bal),usd=ethUsd?eth*ethUsd:0;
-
-      // 统计
       if(ens)ensCount++;totalEth+=eth;
 
-      // 数据集
-      row.dataset.bal=eth;row.dataset.tx=tx;row.dataset.exp=exp;
-      row.dataset.hasens=ens?1:0;
+      row.dataset.bal=eth;row.dataset.tx=tx;row.dataset.exp=exp;row.dataset.hasens=ens?1:0;
       row.cells[2].textContent=ens||'—';setExp(row.cells[3],exp);
       row.cells[4].innerHTML=`${fmtEth(eth)}<span class="usd">(≈$${fmtUsd(usd)})</span>`;
-      row.cells[5].textContent=tx;
-      highlight(row,usd);
-      row.style.display='';return;
+      row.cells[5].textContent=tx;highlight(row,usd);row.style.display='';return;
     }catch(e){if(i<2)await new Promise(r=>setTimeout(r,500));else markError(row);}
   }
 }
@@ -207,49 +229,36 @@ function markError(row){row.classList.add('error');row.style.display='';
   row.onclick=()=>{row.onclick=null;row.classList.remove('error');queryOne(row.cells[1].textContent,row);}
 }
 
-/* —— 更新进度 —— */
-function updateProgress(){const pct=((done/total)*100).toFixed(1);bar.style.width=`${pct}%`;progTxt.textContent=`${done}/${total}  ${pct}%`;}
-
-/* —— 结果汇总 —— */
+/* ---------- 进度 & 汇总 ---------- */
+function updateProgress(){const pct=((done/total)*100).toFixed(1);bar.style.width=`${pct}%`;progTxt.textContent=`${done}/${total}`;}
 function displaySummary(){
   const usdTotal=ethUsd?fmtUsd(totalEth*ethUsd):'—';
   summaryDom.textContent=`✔ 有 ENS 地址 ${ensCount} 个 | 💰 余额合计 ${fmtEth(totalEth)} ETH (≈ $${usdTotal})`;
 }
 
-/* —— 动态阈值监听 —— */
-minUsdInput.addEventListener('input',()=>{
-  [...tbody.rows].forEach(r=>{
-    const usd=parseFloat(r.dataset.bal||0)*ethUsd;
-    highlight(r,usd);
-  });
-});
+/* ---------- 余额阈值监听 ---------- */
+minUsdInput.addEventListener('input',()=>[...tbody.rows].forEach(r=>{
+  const usd=parseFloat(r.dataset.bal||0)*ethUsd;highlight(r,usd);}));
 
-/* —— 排序 —— */
+/* ---------- 排序 ---------- */
 thead.addEventListener('click',e=>{
   const th=e.target.closest('th');if(!th||!th.dataset.key)return;
   const k=th.dataset.key;sorting.dir=sorting.key===k?-sorting.dir:1;sorting.key=k;
   [...thead.querySelectorAll('th')].forEach(t=>t.classList.remove('sort-asc','sort-desc'));
   th.classList.add(sorting.dir===1?'sort-asc':'sort-desc');
-
   const rows=[...tbody.rows].sort((a,b)=>{
-    if(k==='ens'){                               // 特殊：先按有无 ENS，再按字母
-      const ha=b.dataset.hasens-a.dataset.hasens;
-      if(ha!==0)return ha*sorting.dir;
-      return a.cells[2].textContent.localeCompare(b.cells[2].textContent)*sorting.dir;
-    }
-    const ka=parseFloat(a.dataset[k]||0),kb=parseFloat(b.dataset[k]||0);
-    return (kb-ka)*sorting.dir;
-  });
+    if(k==='ens'){const ha=b.dataset.hasens-a.dataset.hasens;if(ha!==0)return ha*sorting.dir;
+      return a.cells[2].textContent.localeCompare(b.cells[2].textContent)*sorting.dir;}
+    const ka=parseFloat(a.dataset[k]||0),kb=parseFloat(b.dataset[k]||0);return (kb-ka)*sorting.dir;});
   tbody.append(...rows);rows.forEach((r,i)=>r.cells[0].textContent=i+1);
 });
 
-/* —— 复制 —— */
+/* ---------- 复制 ---------- */
 tbody.addEventListener('click',e=>{
   const td=e.target.closest('td');if(!td)return;
   if(td.dataset.copy||td.cellIndex===2){
     const txt=td.dataset.copy||td.textContent.trim();
-    if(txt&&txt!=='—')navigator.clipboard.writeText(txt).then(()=>toast('已复制'));
-}});
+    if(txt&&txt!=='—')navigator.clipboard.writeText(txt).then(()=>toast('已复制'));}});
 </script>
 </body>
 </html>
